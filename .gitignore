@@ -1,0 +1,38 @@
+# ─── Environment / Secrets ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+
+# ─── Frontend (Node) ─────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ─── Backend (Python) ────────────────────────────────────────────────────────
+backend/.venv/
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/.pytest_cache/
+backend/celerybeat-schedule
+backend/celerybeat.pid
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── Editors ─────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+*.log
+*.pid
+backend/deploy_hf.py
+.vercel

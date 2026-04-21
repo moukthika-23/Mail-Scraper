@@ -1,0 +1,23 @@
+.app-shell {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Main content area shifts right of sidebar */
+.app-main {
+  margin-left: 230px;
+  margin-top: 64px;
+  padding: 28px 32px;
+  min-height: calc(100vh - 64px);
+  position: relative;
+  z-index: 1;
+  transition: margin-left var(--transition-base);
+}
+
+.app-shell--collapsed .app-main {
+  margin-left: 64px;
+}
+
+@media (max-width: 768px) {
+  .app-main { margin-left: 64px; padding: 20px 16px; }
+}

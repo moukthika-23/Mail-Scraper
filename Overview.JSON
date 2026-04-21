@@ -1,0 +1,78 @@
+{
+    "document_metadata": {
+        "title": "MailLens [cite: 1]",
+        "subtitle": "AI-Powered Gmail Analysis Platform [cite: 2]",
+        "type": "Software Requirements Specification · Core Architecture · Implementation Plan [cite: 3]",
+        "version": "Version 1.0 · Free-tier Deployment Edition [cite: 4]"
+    },
+    "executive_summary": {
+        "description": "MailLens is a self-hosted, zero-cost web application that connects to a user's Gmail account, ingests and indexes email data, and provides a rich analysis dashboard powered by an integrated Large Language Model (LLM). [cite: 6]",
+        "capabilities": "The platform surfaces intelligence that is hidden inside inboxes — communication patterns, label trends, sender behavior, response habits, thread dynamics — and exposes it through interactive charts, LLM-driven natural language search, and a free-form custom query engine. [cite: 7]",
+        "deployment_strategy": "The system is designed to be deployed entirely within the free tiers of cloud providers, using Google's Gmail API (free), Groq's inference API (free tier), Render.com for hosting, and Supabase for the database — making it genuinely zero-cost for personal use. [cite: 8]"
+    },
+    "project_goals": [
+        "Replace manual inbox triage with automated, AI-generated insights. [cite: 10]",
+        "Deliver a conversational search interface over all mail data. [cite: 11]",
+        "Provide a chart-driven analytics dashboard covering labels, senders, time patterns, thread depth, and more. [cite: 12]",
+        "Allow users to compose arbitrary analysis queries and receive chart-and-text responses. [cite: 13]",
+        "Keep every component within free cloud tiers — no credit card risk. [cite: 14]"
+    ],
+    "scope": {
+        "in_scope": "Gmail ingestion, local processing, LLM-based search & analysis, chart generation, custom query engine, label analytics, sender analytics, thread analytics, time-series analytics, deployment guide. [cite: 16]",
+        "out_of_scope": "Multi-user SaaS, payment processing, mobile native apps, direct email composition from the platform. [cite: 17]"
+    },
+    "system_overview": {
+        "architecture_style": "MailLens follows a layered, event-driven architecture with four primary tiers: Data Ingestion, Storage, Intelligence (LLM/Analytics), and Presentation. [cite: 19]",
+        "logical_components": "The system consists of six logical components that communicate via REST APIs and a shared database layer: [cite: 21]",
+        "data_flow": [
+            "User authenticates via Google OAuth 2.0 → backend stores refresh token securely. [cite: 26]",
+            "Background Celery worker calls Gmail API, pages through messages, stores normalized records in Supabase. [cite: 27]",
+            "Embedding worker generates sentence embeddings for each email body and stores them in pgvector. [cite: 28]",
+            "On search: user query is embedded → ANN search over pgvector → top-k results passed to Groq LLM for synthesis. [cite: 29]",
+            "On analysis: SQL aggregation queries run over Supabase → results returned as JSON → Recharts renders interactively. [cite: 30]",
+            "On custom query: user's natural-language question → LLM translates to SQL-like analysis spec → executed → chart rendered. [cite: 31]"
+        ]
+    },
+    "technology_stack_highlights": {
+        "frontend": "React 18 + Vite, Tailwind CSS, Recharts / Chart.js, TanStack Query [cite: 24]",
+        "backend_api": "Python 3.11, FastAPI, Celery (background tasks), APScheduler [cite: 24]",
+        "database": "PostgreSQL 15 + pgvector extension [cite: 24]",
+        "llm_inference": "Groq API — llama-3.1-8b-instant / mixtral-8x7b [cite: 24]"
+    },
+    "functional_requirements_summary": {
+        "authentication": "User shall authenticate via Google OAuth 2.0 (read-only Gmail scope). [cite: 35] System shall store OAuth refresh tokens encrypted at rest in Supabase. [cite: 35]",
+        "ingestion_engine": "System shall pull all emails via Gmail API using full message format. [cite: 37] System shall extract: sender, recipients, subject, body (plain text), date, label IDs, thread ID, message ID. [cite: 37]",
+        "llm_search": "On query submission, system shall perform hybrid search: semantic (pgvector ANN) + keyword (Postgres full-text). [cite: 39] Top-k retrieved emails shall be sent to Groq LLM to synthesize a grounded answer. [cite: 39]",
+        "analytics_dashboard": "Dashboard shall show mail frequency by label (bar chart + pie chart) over configurable time ranges. [cite: 41] Dashboard shall show mail volume over time (daily/weekly/monthly line chart with date picker). [cite: 41]",
+        "custom_query_engine": "Dashboard shall expose a 'Custom Analysis' panel with a free-text input. [cite: 43] On submission, the LLM shall interpret the query and return: (a) a chart type recommendation, (b) the underlying data, (c) a text explanation. [cite: 43]"
+    },
+    "non_functional_requirements": {
+        "performance": [
+            "Smart search response: < 3 seconds end-to-end (including LLM synthesis) for 95th percentile. [cite: 48]",
+            "Dashboard chart load: < 1.5 seconds for pre-computed analytics. [cite: 49]",
+            "Custom query response: < 5 seconds (LLM reasoning included). [cite: 50]"
+        ],
+        "security": [
+            "OAuth tokens encrypted with AES-256 before storage (Supabase RLS policies enforce row-level isolation). [cite: 54]",
+            "Email body content never sent to any third-party API without user consent (LLM only receives selected snippets for search). [cite: 56]",
+            "Environment secrets stored in Render environment variables, never in source code. [cite: 58]"
+        ]
+    },
+    "core_database_schema": [
+        "users: id, google_id, email, refresh_token_enc, created_at [cite: 74]",
+        "emails: id, user_id, gmail_id, thread_id, subject, sender_email, sender_name, body_text, date, snippet, is_read, is_starred, raw_size_bytes [cite: 74]",
+        "email_embeddings: email_id (FK), embedding vector(384) [cite: 74]",
+        "custom_queries: id, user_id, query_text, chart_spec_json, created_at, name [cite: 74]"
+    ],
+    "core_api_endpoints": [
+        "GET /auth/google : Initiate Google OAuth 2.0 flow [cite: 79]",
+        "POST /sync/start : Trigger full or incremental Gmail sync [cite: 79]",
+        "POST /search : Hybrid semantic + keyword search with LLM synthesis [cite: 79]",
+        "POST /analyse/custom : Submit free-text query → chart spec + text answer [cite: 79]"
+    ],
+    "llm_integration_models": {
+        "search_synthesis": "llama-3.1-8b-instant (Low latency, good instruction following) [cite: 112]",
+        "custom_analysis_query_generation": "mixtral-8x7b-32768 (Larger context, stronger reasoning for schema understanding) [cite: 112]",
+        "fallback_summarization": "gemma2-9b-it (Efficient, good summarization) [cite: 112]"
+    }
+}

@@ -1,0 +1,231 @@
+/* ============================================================
+   MailLens Design System — Technical Paper Theme
+   ============================================================ */
+
+:root {
+  /* --- Color Palette (Editorial Peach & Crisp Whites) --- */
+  --bg-primary: #fffaf7; /* Extremely subtle warm peach background */
+  --bg-secondary: #fcece3; /* Slightly darker warm accent */
+  --bg-card: #ffffff;      /* Pure white for depth and contrast */
+  --bg-card-hover: #fcfcfc;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  --bg-glass-hover: #ffffff;
+
+  /* Black instead of Brown/Accents */
+  --accent-purple: #111111; 
+  --accent-purple-light: #222222;
+  --accent-purple-glow: transparent;
+  --accent-blue: #111111;
+  --accent-blue-light: #444444;
+  --accent-cyan: #111111;
+  --accent-green: #111111;
+  --accent-amber: #111111;
+  --accent-rose: #111111;
+  --accent-orange: #111111;
+
+  --text-primary: #0a0a0a; /* Stark black */
+  --text-secondary: #4a4a4a; /* Muted black */
+  --text-muted: #8c8581; /* Warm grey */
+  --text-accent: #111111;
+
+  --border-subtle: #f0e6e1; /* Warm soft border */
+  --border-medium: #e8dbd5;
+  --border-accent: #111111;
+
+  /* --- Spacing --- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-card: none;
+  --shadow-purple: none;
+  --shadow-glow: none;
+
+  /* --- Fonts (Editorial) --- */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'DM Mono', 'Fira Code', monospace;
+  --font-hero: 'Playfair Display', serif;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; text-decoration: none; }
+
+input, textarea, button, select {
+  font-family: inherit;
+  font-size: inherit;
+  border-radius: var(--radius-sm);
+}
+
+button { cursor: pointer; border: none; background: none; }
+
+/* --- Utility Classes (Paper style) --- */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-base);
+}
+
+.glass-card:hover {
+  border-color: var(--border-accent);
+}
+
+/* --- Gradient Text (Removed) --- */
+.gradient-text {
+  background: none;
+  color: var(--text-primary);
+  -webkit-text-fill-color: var(--text-primary);
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+.animate-fade-in { animation: fadeIn 0.15s ease both; }
+.animate-slide-left { animation: slideInLeft 0.15s ease both; }
+.animate-spin { animation: spin 1s linear infinite; }
+.animate-pulse-glow { animation: none; }
+.animate-float { animation: none; }
+
+/* --- Loading Skeleton --- */
+.skeleton {
+  background: var(--bg-secondary);
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Scrollable Container --- */
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* --- Focus Ring --- */
+*:focus-visible {
+  outline: 1px solid var(--accent-purple);
+  outline-offset: 1px;
+}
+
+/* --- Badge (Technical / Outline) --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-medium);
+}
+
+/* Remove colored badges */
+.badge-purple, .badge-blue, .badge-green, .badge-amber, .badge-rose, .badge-muted {
+  background: var(--bg-primary); 
+  color: var(--text-secondary); 
+  border: 1px solid var(--border-medium);
+}
+
+/* --- Background Orbs (Removed) --- */
+.orb {
+  display: none;
+}
+
+/* --- Divider --- */
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  width: 100%;
+}
+
+/* --- Recharts overrides --- */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: none !important;
+}
+
+.recharts-cartesian-grid line { stroke: var(--border-subtle) !important; }
+.recharts-xAxis .recharts-text, .recharts-yAxis .recharts-text {
+  fill: var(--text-muted) !important;
+  font-size: 11px !important;
+  font-family: var(--font-sans) !important;
+}
