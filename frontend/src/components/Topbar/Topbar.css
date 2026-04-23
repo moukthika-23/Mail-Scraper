@@ -1,30 +1,23 @@
 .topbar {
-  position: fixed;
+  position: sticky;
   top: 0;
-  right: 0;
-  height: 64px;
-  left: var(--sidebar-width, 230px);
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle);
+  z-index: 90;
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 28px;
-  z-index: 90;
-  transition: left var(--transition-base);
+  padding: 0 0 24px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
 }
 
-.topbar__page {
-  flex: 0 0 auto;
-}
+.topbar__page { flex: 0 0 auto; }
 
 .topbar__title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: -0.02em;
   color: var(--text-primary);
+  letter-spacing: -0.03em;
   line-height: 1.2;
 }
 
@@ -32,42 +25,44 @@
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 400;
-  margin-top: 1px;
+  margin-top: 2px;
+  letter-spacing: 0.02em;
 }
 
-/* Quick search */
+/* Quick search pill */
 .topbar__search-pill {
   flex: 1;
-  max-width: 380px;
+  max-width: 340px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  background: var(--bg-glass);
+  padding: 9px 16px;
+  background: rgba(47,47,228,0.07);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
   color: var(--text-muted);
   font-size: 13px;
   cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .topbar__search-pill:hover {
-  border-color: var(--border-accent);
-  background: var(--bg-glass-hover);
+  border-color: var(--border-medium);
+  background: rgba(47,47,228,0.12);
   color: var(--text-secondary);
+  box-shadow: 0 0 16px rgba(47,47,228,0.12);
 }
 
 .topbar__kbd {
   margin-left: auto;
   font-size: 10px;
   font-family: var(--font-mono);
-  background: var(--bg-card);
-  border: 1px solid var(--border-medium);
+  background: rgba(47,47,228,0.12);
+  border: 1px solid var(--border-subtle);
   border-radius: 5px;
   padding: 2px 6px;
-  color: var(--text-muted);
+  color: var(--cosmos-electric);
 }
 
 /* Actions */
@@ -76,6 +71,7 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .topbar__action-btn {
@@ -85,34 +81,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
-  background: var(--bg-glass);
+  color: var(--text-muted);
+  background: rgba(47,47,228,0.07);
   border: 1px solid var(--border-subtle);
-  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  transition: all var(--transition-fast);
   position: relative;
   cursor: pointer;
 }
 
 .topbar__action-btn:hover {
-  background: var(--bg-glass-hover);
+  background: rgba(47,47,228,0.18);
   color: var(--text-primary);
   border-color: var(--border-medium);
+  box-shadow: 0 0 12px rgba(47,47,228,0.2);
 }
 
 .topbar__action-btn--syncing {
-  color: var(--accent-purple-light);
+  color: var(--cosmos-electric);
   border-color: var(--border-accent);
+  animation: pulseGlow 2s ease-in-out infinite;
 }
 
 .topbar__notif-dot {
   position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 7px;
-  height: 7px;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--accent-rose);
-  border: 2px solid var(--bg-primary);
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 0 6px rgba(248,113,113,0.6);
 }
 
 /* Avatar */
@@ -121,19 +120,23 @@
   height: 36px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--text-primary);
+  background: linear-gradient(135deg, var(--cosmos-royal), var(--cosmos-electric));
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  font-weight: 700;
+  font-size: 14px;
   border: 2px solid var(--border-medium);
   cursor: pointer;
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 10px var(--cosmos-glow);
 }
 
 .topbar__avatar:hover {
-  border-color: var(--accent-purple-light);
-  transform: scale(1.05);
+  border-color: var(--cosmos-electric);
+  transform: scale(1.06);
+  box-shadow: 0 0 18px var(--cosmos-glow);
 }
 
 .topbar__avatar img {

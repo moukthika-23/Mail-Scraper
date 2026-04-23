@@ -768,9 +768,9 @@ async def sync_gmail_messages(
 
                 oldest_after_recent, _ = _fetch_email_date_bounds(user_id)
                 existing_cursor_end = _parse_iso_date(existing_meta.get("backfill_cursor_end"))
-                computed_backfill_end = oldest_after_recent - timedelta(days=1) if oldest_after_recent else None
+                computed_backfill_end = oldest_after_recent - timedelta(days=1) if oldest_after_recent else recent_lower_bound - timedelta(days=1)
                 backfill_end = existing_cursor_end or computed_backfill_end
-                backfill_complete = backfill_end is None or backfill_end < backfill_lower_bound
+                backfill_complete = backfill_end < backfill_lower_bound
 
                 if mode == "full":
                     backfill_complete = False if requested_from and requested_from < recent_lower_bound else backfill_complete

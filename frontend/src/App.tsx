@@ -109,9 +109,9 @@ const AppLayout: React.FC = () => {
   return (
     <div className={`app-shell ${sidebarCollapsed ? 'app-shell--collapsed' : ''}`}>
       <Sidebar />
-      <Topbar />
 
       <main className="app-main" id="app-main-content" role="main">
+        <Topbar />
         <Suspense fallback={<PageSkeleton />}>
           {renderPage()}
         </Suspense>
@@ -120,6 +120,7 @@ const AppLayout: React.FC = () => {
       <Notifications />
     </div>
   );
+
 };
 
 const App: React.FC = () => (

@@ -8,7 +8,7 @@ export const AUTH_GOOGLE_URL = `${API_V1_BASE_URL}/auth/google`;
 export const apiClient = axios.create({
   baseURL: API_V1_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30_000,
+  timeout: 60_000,
 });
 
 apiClient.interceptors.request.use((config) => {

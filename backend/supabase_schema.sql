@@ -144,3 +144,41 @@ create policy "Users see own labels"
 create policy "Users see own queries"
   on custom_queries for all
   using (user_id = auth.uid());
+
+-- ─── RPC Functions ────────────────────────────────────────────────────────────
+
+-- Vector Search RPC (called by backend search_service)
+create or replace function match_emails (
+  query_embedding vector(384),
+  p_user_id uuid,
+  match_count int default 10
+) returns table (
+  id uuid,
+  subject text,
+  snippet text,
+  sender_email text,
+  sender_name text,
+  date timestamptz,
+  body_text text,
+  similarity float
+)
+language plpgsql
+as $$
+begin
+  return query
+  select
+    e.id,
+    e.subject,
+    e.snippet,
+    e.sender_email,
+    e.sender_name,
+    e.date,
+    e.body_text,
+    1 - (ee.embedding <=> query_embedding) as similarity
+  from email_embeddings ee
+  join emails e on e.id = ee.email_id
+  where e.user_id = p_user_id
+  order by ee.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;

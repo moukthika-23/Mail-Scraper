@@ -1,3 +1,4 @@
+/* ─── Auth Page TSX Update for new orb visual ─────────────── */
 import React from 'react';
 import { AUTH_GOOGLE_URL } from '../api/client';
 import './AuthPage.css';
@@ -9,7 +10,8 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-page__nav">
+      {/* Nav */}
+      <nav className="auth-page__nav">
         <div className="auth-page__logo">
           <div className="auth-page__logo-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -19,18 +21,29 @@ const AuthPage: React.FC = () => {
           </div>
           <div className="auth-page__logo-text">
             <span>MailLens</span>
-            <span className="auth-page__logo-sub">AI PLATFORM</span>
+            <span className="auth-page__logo-sub">AI Platform</span>
           </div>
         </div>
-        <div className="auth-page__nav-link">Log In</div>
-      </div>
-      
+        <div className="auth-page__nav-link">Sign In</div>
+      </nav>
+
+      {/* Main content */}
       <div className="auth-page__content">
         <div className="auth-page__left animate-fade-in-up">
-          <h1 className="auth-page__title">Simplify Email <br/>Analysis with AI</h1>
-          <p className="auth-page__desc">Sign up or log in to analyze<br/>your inbox with AI-powered insights:</p>
-          
-          <button className="auth-page__google-btn" onClick={handleGoogleLogin}>
+          <div className="auth-page__eyebrow">
+            <span>✦</span> Powered by Groq LLM
+          </div>
+          <h1 className="auth-page__title">
+            Your Inbox,<br />
+            <span>Intelligently</span><br />
+            Understood.
+          </h1>
+          <p className="auth-page__desc">
+            Connect your Gmail and instantly unlock AI-powered semantic search,
+            analytics, and natural language inbox analysis.
+          </p>
+
+          <button className="auth-page__google-btn" id="auth-google-btn" onClick={handleGoogleLogin}>
             <svg viewBox="0 0 24 24" className="auth-page__google-icon">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -39,24 +52,29 @@ const AuthPage: React.FC = () => {
             </svg>
             Continue with Google
           </button>
-          
-          <p className="auth-page__disclaimer">Read-only access to your emails — your data stays private.</p>
+
+          <p className="auth-page__disclaimer">
+            🔒 Read-only access — your data stays private and secure.
+          </p>
         </div>
-        
+
+        {/* Right — animated orb */}
         <div className="auth-page__right animate-float">
-          <div className="auth-page__hexagon">
+          <div className="auth-page__visual">
+            <div className="auth-page__orb-ring" />
+            <div className="auth-page__orb-ring-2" />
             <div className="auth-page__hex-inner">
-               <div className="auth-page__hex-laurel">~ ❦ ~</div>
-               <div className="auth-page__hex-title">MAIL LENS</div>
-               <div className="auth-page__hex-sub">AI-Powered Email Insights</div>
-               <div className="auth-page__hex-laurel">~ ❦ ~</div>
+              <div className="auth-page__hex-laurel">✦ ✦ ✦</div>
+              <div className="auth-page__hex-title">MAIL LENS</div>
+              <div className="auth-page__hex-sub">AI-Powered Email Intelligence</div>
+              <div className="auth-page__hex-laurel">✦ ✦ ✦</div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="auth-page__footer">
-        Privacy Policy · Terms of Service · © 2026 MailLens
+        Privacy Policy · Terms of Service · © 2026 MailLens AI Platform
       </div>
     </div>
   );

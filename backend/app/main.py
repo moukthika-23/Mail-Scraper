@@ -37,7 +37,22 @@ async def health():
 
 
 @app.on_event("startup")
-async def startup_resume_backfills() -> None:
+async def startup_events() -> None:
+    # Reset stuck syncing states because the server restarted
+    from app.core.db import supabase
+    try:
+        supabase.table("sync_state").update({"status": "idle"}).eq("status", "syncing").execute()
+        print("[Gmail Sync] Reset any stuck 'syncing' states to 'idle'.")
+    except Exception as e:
+        print(f"[Gmail Sync] Failed to reset syncing states: {e}")
+
+    # Preload the embedding model in a background thread so the first search doesn't timeout
+    from app.services.search_service import get_embedding_model
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, get_embedding_model)
+    print("[Search] Preloading embedding model...")
+
     resumed = await resume_auto_backfills_from_db()
     if resumed:
         print(f"[Gmail Sync] Resumed auto-backfill workers for {resumed} users")

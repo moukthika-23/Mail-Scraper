@@ -19,9 +19,25 @@ def get_embedding_model():
 
 async def perform_rag_search(query: str, user_id: str, top_k: int = 10) -> dict:
     start_time = time.time()
+    query_lower = query.strip().lower()
     
-    # 1. Embed query (fast CPU execution)
-    # 2. Vector Search (Assume RPC exists -> user must execute this SQL in Supabase)
+    # 1. Exact/Partial Sender Match (to group ALL emails from a domain/email)
+    try:
+        sender_res = (
+            supabase.table("emails")
+            .select("id,subject,snippet,sender_email,sender_name,date,body_text")
+            .eq("user_id", user_id)
+            .ilike("sender_email", f"%{query_lower}%")
+            .order("date", desc=True)
+            .limit(50)  # Fetch up to 50 emails from this sender to group them
+            .execute()
+        )
+        sender_matches = sender_res.data or []
+    except Exception as e:
+        print(f"[Sender Match Error] {e}")
+        sender_matches = []
+
+    # 2. Vector Search (Semantic)
     try:
         query_vector = get_embedding_model().encode(query).tolist()
         search_res = supabase.rpc(
@@ -32,12 +48,28 @@ async def perform_rag_search(query: str, user_id: str, top_k: int = 10) -> dict:
                 "match_count": top_k
             }
         ).execute()
-        results = search_res.data or []
+        semantic_matches = search_res.data or []
     except Exception as e:
         print(f"[RAG Error] RPC failed: {e}. Falling back to empty contexts.")
-        results = []
+        semantic_matches = []
+
+    # Combine and deduplicate
+    seen_ids = set()
+    results = []
+    
+    for doc in sender_matches:
+        if doc.get('id') not in seen_ids:
+            seen_ids.add(doc.get('id'))
+            doc['similarity'] = 1.0  # High relevance for direct sender match
+            results.append(doc)
+            
+    for doc in semantic_matches:
+        if doc.get('id') not in seen_ids:
+            seen_ids.add(doc.get('id'))
+            results.append(doc)
 
     if not results:
+        # 3. Fallback to naive keyword text search
         try:
             recent_res = (
                 supabase.table("emails")
@@ -47,7 +79,6 @@ async def perform_rag_search(query: str, user_id: str, top_k: int = 10) -> dict:
                 .limit(250)
                 .execute()
             )
-            query_lower = query.lower()
             candidates = recent_res.data or []
             matched = [
                 email
@@ -84,9 +115,12 @@ async def perform_rag_search(query: str, user_id: str, top_k: int = 10) -> dict:
     
     # 3. Call Groq for Context-Aware Generation
     system_prompt = (
-        "You are MailLens, an expert AI email assistant. Output a highly professional, concise, and helpful response "
-        "synthesized DIRECTLY from the provided email context. If you cannot answer the query using the context, explicitly say so. "
-        "Do not hallucinate external details."
+        "You are MailLens, an expert AI email assistant. Output a highly professional, concise, and helpful response. "
+        "The user wants to find and group all emails related to a specific website, sender, or topic. "
+        "CRITICAL INSTRUCTION: You MUST group the provided emails by Sender or Domain, and present them as a consolidated, chronological summary. "
+        "Do not just list them randomly. Create a clear, unified summary of all the interactions with that entity (e.g., 'Here are all your emails from Amazon: ...'). "
+        "If the search doesn't match a specific sender, group them logically by topic. "
+        "Keep it concise, professional, and helpful. If you cannot answer using the context, say so. Do not hallucinate."
     )
     
     user_prompt = f"Context:\n{context_str}\n\nUser Query: {query}"
