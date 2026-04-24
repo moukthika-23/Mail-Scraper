@@ -1,79 +1,140 @@
-# MailLens 🔍
+📧 MailLens – AI Powered Gmail Intelligence Platform
 
-**AI-Powered Gmail Analysis Platform**
+An advanced full-stack AI application that transforms your Gmail inbox into a smart, searchable, and insightful system using LLMs, semantic search, and analytics.
 
-A self-hosted, zero-cost web app that connects to your Gmail account and surfaces hidden inbox intelligence through LLM-powered search, interactive charts, and a free-form custom query engine.
+🚀 Live Demo
 
----
+🔗 https://mail-scraper-two.vercel.app
 
-## ✨ Features
+✨ Features
+🔐 Authentication
+Google OAuth 2.0 login
+Secure token handling (access + refresh tokens)
+Backend-controlled authentication flow
+📬 Gmail Integration
+Read-only access to Gmail
+Fetch emails, threads, labels, metadata
+Background sync & auto-backfill
+🔍 Smart Search (Hybrid AI Search)
+Keyword + Semantic search (pgvector)
+Context-aware results using LLM (Groq)
+Fast responses with Redis caching
+📊 Analytics Dashboard
+Email volume trends
+Sender insights
+Label distribution
+Thread depth visualization
+🧠 AI Analysis Studio
+Ask questions in natural language
+Converts queries → SQL via LLM
+Generates dynamic charts (Recharts)
+⚡ Background Processing
+Smart sync (recent emails first)
+Historical backfill (chunk-based)
+Automated scheduling
+🏗️ System Architecture
+<img width="1536" height="1024" alt="ChatGPT Image Apr 24, 2026, 09_37_02 AM" src="https://github.com/user-attachments/assets/43c86e88-af26-4a94-a0c4-a82d66316f07" />
 
-| Feature | Status |
-|---|---|
-| **Smart Search** — Semantic + keyword hybrid search with Groq LLM synthesis | ✅ Frontend complete |
-| **Analytics Dashboard** — Volume, labels, senders, heatmap, thread depth | ✅ Frontend complete |
-| **AI Analysis Studio** — Natural language → interactive chart via Groq LLM | ✅ Frontend complete |
-| **Gmail OAuth Sync** — Read-only Gmail ingestion via Gmail API | 🔧 Backend scaffold |
-| **pgvector Embeddings** — Sentence-transformer semantic search over email bodies | 🔧 Backend scaffold |
-| **Custom Query Engine** — LLM translates queries to SQL-like analysis specs | ✅ Frontend + 🔧 Backend |
 
----
+Frontend → Backend API → Database / Cache / AI / Gmail API
 
-## 🏗 Architecture
-
-```
-frontend/  — React 18 + Vite + TypeScript + Recharts + TanStack Query
-backend/   — Python 3.11 + FastAPI + Celery + Supabase + Groq API
-```
-
-## 🚀 Quick Start (Real Data Mode)
-
-```bash
+Frontend (React + Vite) → UI, charts, interactions
+Backend (FastAPI) → API logic, OAuth, orchestration
+Database (Supabase PostgreSQL + pgvector) → Emails & embeddings
+Cache (Upstash Redis) → Faster queries
+AI (Groq + Transformers) → NLP + semantic search
+External API (Gmail API) → Email ingestion
+🛠️ Tech Stack
+Frontend
+React 18
+TypeScript
+Vite
+Zustand (state management)
+TanStack Query
+Recharts
+Backend
+FastAPI (Python 3.11)
+Celery (background workers)
+APScheduler (cron jobs)
+Database & Cache
+Supabase PostgreSQL
+pgvector (embeddings)
+Upstash Redis
+AI & ML
+Groq API (LLaMA models)
+sentence-transformers (MiniLM)
+External APIs
+Google OAuth 2.0
+Gmail API
+Deployment
+Frontend → Vercel
+Backend → Hugging Face Spaces (Docker)
+⚙️ Installation (Local Setup)
+1. Clone Repository
+git clone https://github.com/moukthika-23/Mail-Scraper.git
+cd Mail-Scraper
+2. Backend Setup
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+3. Frontend Setup
 cd frontend
 npm install
-npm run dev        # → http://localhost:5173
-```
+npm run dev
+🔑 Environment Variables
+Backend (.env)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/auth/callback
 
-The frontend is wired for real data by default. Point `VITE_API_URL` at your backend and keep `VITE_MOCK_MODE=false` for normal use.
+SUPABASE_URL=
+SUPABASE_SERVICE_KEY=
 
-If you want a local demo without live services, set `VITE_MOCK_MODE=true` in `frontend/.env` to opt into the mock fixtures.
+REDIS_URL=
+GROQ_API_KEY=
+FRONTEND_URL=http://localhost:5173
+Frontend (.env)
+VITE_API_URL=http://localhost:8000/api/v1
+🔄 Key Workflows
+1. User Login & Sync
+User clicks "Continue with Google"
+Backend handles OAuth
+Gmail access granted
+Celery starts email sync
+Emails stored + embeddings generated
+2. Smart Search
+User enters query
+Query embedding generated
+pgvector similarity search
+Results + context sent to Groq LLM
+AI-generated response returned
+3. AI Analysis
+User asks natural language query
+Groq converts → SQL
+Backend executes query
+Data → charts (Recharts)
+🐳 Docker (Backend)
+docker build -t mail-scraper .
+docker run -p 8000:8000 mail-scraper
+☸️ Deployment
+Backend (Hugging Face)
+Create Docker Space
+Add secrets (.env values)
+Deploy
+Frontend (Vercel)
+Import repo
+Set root → /frontend
 
-## 🔧 Backend Setup
+Add env:
 
-```bash
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # fill in your keys
-uvicorn app.main:app --reload
-```
+VITE_API_URL=https://your-backend-url/api/v1
+📌 Key Highlights
+🔍 Hybrid AI Search (keyword + semantic)
+🧠 LLM-powered query engine
+⚡ High performance with Redis caching
+🔄 Background sync architecture
+☁️ Fully cloud deployed system
+👩‍💻 Author
 
-The backend requires real Supabase, Google OAuth, and Groq credentials. It no longer silently swaps in a dummy database client when those values are missing.
-
-### Gmail sync behavior
-
-- `smart` sync indexes recent mail first (`GMAIL_SMART_RECENT_DAYS`) so the app is usable quickly.
-- Historical mail is backfilled in resumable windows (`GMAIL_BACKFILL_WINDOW_DAYS`) and advances one window per smart-sync run.
-- `incremental` sync focuses on newest mail with a small overlap (`GMAIL_SYNC_OVERLAP_DAYS`) to avoid misses.
-- Per-request Gmail paging is controlled by `GMAIL_PAGE_SIZE` and detail fetch concurrency by `GMAIL_CONCURRENCY`.
-- Auto-continue backfill is enabled by default and can be tuned with `GMAIL_AUTO_BACKFILL_*` settings.
-
-## 📦 Tech Stack (100% Free Tier)
-
-| Layer | Tech |
-|---|---|
-| Frontend | React 18 + Vite + Recharts + TanStack Query + Zustand |
-| Backend | FastAPI + Celery + APScheduler |
-| Database | Supabase PostgreSQL + pgvector |
-| LLM | Groq API — llama-3.1-8b-instant / llama-3.3-70b-versatile |
-| Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
-| Cache | Upstash Redis |
-| Hosting | Vercel (frontend) + Hugging Face Spaces (backend) |
-
-## 🔑 Environment Variables
-
-Copy `frontend/.env` and `backend/.env.example` and fill in:
-
-- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — [Google Cloud Console](https://console.cloud.google.com)
-- `GROQ_API_KEY` — [console.groq.com](https://console.groq.com)
-- `SUPABASE_URL` / keys — [supabase.com](https://supabase.com)
+Moukthika
+📧 AI & Full Stack Developer
